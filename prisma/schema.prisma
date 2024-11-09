@@ -1,0 +1,127 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  password      String    // Hashed
+  name          String?
+  bio           String?   @db.Text
+  avatar        String?   
+  coverImage    String?   
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  tweets        Tweet[]
+  likes         Like[]
+  retweets      Retweet[]
+  followers     Follow[]    @relation("following")
+  following     Follow[]    @relation("followers")
+  comments      Comment[]
+  bookmarks     Bookmark[]
+}
+
+// Tweet model
+model Tweet {
+  id          String    @id @default(cuid())
+  content     String    @db.Text
+  images      String[]  // Array of S3 URLs
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  likes       Like[]
+  retweets    Retweet[]
+  comments    Comment[]
+  bookmarks   Bookmark[]
+
+  // If this tweet is a reply
+  replyToId   String?
+  replyTo     Tweet?    @relation("Replies", fields: [replyToId], references: [id])
+  replies     Tweet[]   @relation("Replies")
+}
+
+// Like model
+model Like {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tweetId   String
+  tweet     Tweet    @relation(fields: [tweetId], references: [id])
+
+  @@unique([userId, tweetId])
+}
+
+// Retweet model
+model Retweet {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tweetId   String
+  tweet     Tweet    @relation(fields: [tweetId], references: [id])
+
+  @@unique([userId, tweetId])
+}
+
+// Follow model
+model Follow {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  
+  // Relations
+  followerId    String
+  follower      User     @relation("following", fields: [followerId], references: [id])
+  followingId   String
+  following     User     @relation("followers", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+}
+
+// Comment model
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tweetId   String
+  tweet     Tweet    @relation(fields: [tweetId], references: [id])
+}
+
+// Bookmark model
+model Bookmark {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tweetId   String
+  tweet     Tweet    @relation(fields: [tweetId], references: [id])
+
+  @@unique([userId, tweetId])
+}
