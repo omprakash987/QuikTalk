@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
   
 export default function SignupPage() {
   const router = useRouter();
@@ -184,6 +185,7 @@ export default function SignupPage() {
             >
               {loading ? 'Creating account...' : 'Sign up'}
             </button>
+            <span className=' flex items-center justify-center font-bold mt-5'>already have an account ? <Link href={"/signin"} className=' ml-2'>signin</Link> </span>
           </div>
         </form>
       </div>

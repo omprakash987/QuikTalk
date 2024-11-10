@@ -2,6 +2,7 @@
 
 
 import axios from 'axios'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import React from 'react'
@@ -78,6 +79,7 @@ export default function SignInPage(){
             >
               {loading ? 'Creating account...' : 'Sign up'}
             </button>
+            <span className=' flex justify-center items-center'>don't have account ? <Link href={"/signup"} className=' ml-2'> signup</Link></span>
                 </form>
             </div>
             
