@@ -22,7 +22,7 @@ export interface SignupFormData {
   }
   
    
-  // app/api/auth/signup/route.ts
+ 
   import { NextResponse } from 'next/server';
   import {hash} from 'bcrypt'
    
